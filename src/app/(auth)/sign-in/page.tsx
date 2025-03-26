@@ -5,6 +5,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { LoadingButton } from "@/components/loading-button";
 
 interface LoginProps {
   searchParams: Promise<Message>;
@@ -22,14 +23,14 @@ export default async function SignInPage({ searchParams }: LoginProps) {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <Navbar />
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8">
-        <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-sm">
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md rounded-lg border border-border bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300">
           <form className="flex flex-col space-y-6">
             <div className="space-y-2 text-center">
               <h1 className="text-3xl font-semibold tracking-tight">Sign in</h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-gray-600 max-w-2xl mx-auto">
                 Don't have an account?{" "}
                 <Link
                   className="text-primary font-medium hover:underline transition-all"
@@ -61,7 +62,7 @@ export default async function SignInPage({ searchParams }: LoginProps) {
                     Password
                   </Label>
                   <Link
-                    className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-all"
+                    className="text-xs text-gray-600 hover:text-gray-900 hover:underline transition-all"
                     href="/forgot-password"
                   >
                     Forgot Password?
@@ -79,7 +80,7 @@ export default async function SignInPage({ searchParams }: LoginProps) {
             </div>
 
             <SubmitButton
-              className="w-full"
+              className="w-full text-white bg-gradient-to-r from-green-600 to-blue-600 rounded-md hover:from-green-700 hover:to-blue-700 shadow-md hover:shadow-lg transition-all"
               pendingText="Signing in..."
               formAction={signInAction}
             >
@@ -90,6 +91,6 @@ export default async function SignInPage({ searchParams }: LoginProps) {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

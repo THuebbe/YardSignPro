@@ -7,7 +7,7 @@ import { createClient } from "../../supabase/server";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const fullName = formData.get("full_name")?.toString() || '';
+  const fullName = formData.get("full_name")?.toString() || "";
   const supabase = await createClient();
 
   if (!email || !password) {
@@ -18,14 +18,17 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  const { data: { user }, error } = await supabase.auth.signUp({
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
         email: email,
-      }
+      },
     },
   });
 
@@ -35,32 +38,39 @@ export const signUpAction = async (formData: FormData) => {
 
   if (user) {
     try {
+      // Check if user already exists in the users table
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-      const { error: updateError } = await supabase
-        .from('users')
-        .insert({
+      // Only insert if user doesn't already exist
+      if (!existingUser) {
+        const { error: updateError } = await supabase.from("users").insert({
           id: user.id,
           user_id: user.id,
           name: fullName,
           email: email,
           token_identifier: user.id,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
 
-      if (updateError) {
-        // Error handling without console.error
-        return encodedRedirect(
-          "error",
-          "/sign-up",
-          "Error updating user. Please try again.",
-        );
+        if (updateError) {
+          // Provide more specific error message
+          return encodedRedirect(
+            "error",
+            "/sign-up",
+            `Error updating user: ${updateError.message}`,
+          );
+        }
       }
-    } catch (err) {
-      // Error handling without console.error
+    } catch (err: any) {
+      // More detailed error message
       return encodedRedirect(
         "error",
         "/sign-up",
-        "Error updating user. Please try again.",
+        `Error updating user: ${err?.message || "Unknown error"}`,
       );
     }
   }
@@ -77,13 +87,21 @@ export const signInAction = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
+  }
+
+  // Check if user has an active subscription
+  if (data.user) {
+    const hasSubscription = await checkUserSubscription(data.user.id);
+    if (hasSubscription) {
+      return redirect("/dashboard");
+    }
   }
 
   return redirect("/dashboard");
@@ -166,10 +184,10 @@ export const checkUserSubscription = async (userId: string) => {
   const supabase = await createClient();
 
   const { data: subscription, error } = await supabase
-    .from('subscriptions')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'active')
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("status", "active")
     .single();
 
   if (error) {
