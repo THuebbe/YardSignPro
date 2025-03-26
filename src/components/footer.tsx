@@ -76,14 +76,6 @@ export default function Footer() {
                   Dashboard
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-green-600 transition-colors"
-                >
-                  API
-                </Link>
-              </li>
             </ul>
           </div>
 

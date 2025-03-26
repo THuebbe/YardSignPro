@@ -20,15 +20,11 @@ export async function SubscriptionCheck({
     redirect("/sign-in");
   }
 
-  // For now, allow access to the dashboard without subscription check
-  // We'll uncomment this when subscription functionality is fully tested
-  /*
-    const isSubscribed = await checkUserSubscription(user?.id!);
+  const isSubscribed = await checkUserSubscription(user?.id!);
 
-    if (!isSubscribed) {
-        redirect(redirectTo);
-    }
-    */
+  if (!isSubscribed) {
+    redirect(redirectTo);
+  }
 
   return <>{children}</>;
 }
