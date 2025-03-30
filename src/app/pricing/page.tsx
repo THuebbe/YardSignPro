@@ -31,10 +31,11 @@ export default async function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {plans?.map((item: any) => (
-            <PricingCard key={item.id} item={item} user={user} />
-          ))}
+        <div className="max-w-7xl mx-auto">
+          <stripe-pricing-table
+            pricing-table-id="prctbl_1R71a9FdwpVXW8mDGmhQYCUe"
+            publishable-key="pk_test_51R4pW5FdwpVXW8mDWjNidCueG8MHCs6nt7scxQm4SKLyZ9z1ZBYLEXdzNOLTKJuu9w92no74aW5HhIFE8dgsaYpq00UydS2LJi"
+          ></stripe-pricing-table>
         </div>
       </div>
     </>
